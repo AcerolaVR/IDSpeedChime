@@ -44,7 +44,7 @@ def speedListener():
     while True:
         if ENABLED:
             print(THRESHOLD)
-            print(ENABLED)
+            #print(ENABLED)
             playDing()
 
         time.sleep(1.6)
@@ -55,16 +55,16 @@ def on_click(x, y, button, pressed):
     global ENABLED
 
     # print the
-    print('Pressed' if pressed else 'Released')
-    print(button)
+    # print('Pressed' if pressed else 'Released')
+    # print(button)
 
     # change the value on release
     if not pressed:
-        if button is Button.left:
+        if button is Button.button8:
             THRESHOLD = THRESHOLD - 5
-        if button is Button.middle:
+        if button is Button.left:
             ENABLED = not ENABLED
-        if button is Button.right:
+        if button is Button.button9:
             THRESHOLD = THRESHOLD + 5
 
 
@@ -76,7 +76,7 @@ def speak(text):
 
 
 def playDing():
-    wave_obj = sa.WaveObject.from_wave_file("speedchime.wav")
+    wave_obj = sa.WaveObject.from_wave_file("/home/pi/personal/IDSpeedChime/speedchime.wav")
     play_obj = wave_obj.play()
 
 
