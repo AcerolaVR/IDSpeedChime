@@ -1,19 +1,18 @@
+import threading
 import time
 
-import obd  # library for connecting and reading OBD-II
-import simpleaudio as sa  # library for playing audio files
 import pyttsx3 as tts  # text to speech for connect and speed prompts
-import multiprocessing
+import simpleaudio as sa  # library for playing audio files
+from pynput.mouse import Button, Listener  # library for listening to mouse inputs
 
-from pynput.mouse import Listener
-
-# A shared value
-THRESHOLD = 30
-ENABLED = False
+# shared value
+THRESHOLD = 30  # speed threshold in mph
+ENABLED = False  # whether or not the speed chime is enabled
 
 # A lock for synchronizing access to x
-THRESHOLD_lock = multiprocessing.Lock()
-ENABLED_lock = multiprocessing.Lock()
+THRESHOLD_lock = threading.Lock()
+ENABLED_lock = threading.Lock()
+
 
 def eventListener():
     global THRESHOLD
@@ -21,6 +20,7 @@ def eventListener():
 
     with Listener(on_click=on_click) as listener:
         listener.join()
+
 
 def speedListener():
     global THRESHOLD
@@ -41,33 +41,32 @@ def speedListener():
     #         playDing()
     #     time.sleep(1.5)
 
-    # obd connection initialization
-    #
-    # connection = obd.OBD()  # auto-connects to USB or RF port
-    #
-    # cmd = obd.commands.SPEED  # select an OBD command (sensor)
-    #
-    # response = connection.query(cmd)  # send the command, and parse the response
-
     while True:
-        # print(response.value)  # returns unit-bearing values thanks to Pint
-        # print(response.value.to("mph"))  # user-friendly unit conversions
-        # if threshold < response.value.to("mph"):
-        if True:
+        if ENABLED:
             print(THRESHOLD)
+            print(ENABLED)
             playDing()
 
-        time.sleep(1.7)
+        time.sleep(1.6)
 
 
 def on_click(x, y, button, pressed):
-    print('{0} at {1}'.format(
-        'Pressed' if pressed else 'Released',
-        (x, y)))
-    THRESHOLD + 5
+    global THRESHOLD
+    global ENABLED
+
+    # print the
+    print('Pressed' if pressed else 'Released')
+    print(button)
+
+    # change the value on release
     if not pressed:
-        THRESHOLD + 5
-        return True
+        if button is Button.left:
+            THRESHOLD = THRESHOLD - 5
+        if button is Button.middle:
+            ENABLED = not ENABLED
+        if button is Button.right:
+            THRESHOLD = THRESHOLD + 5
+
 
 def speak(text):
     engine = tts.init()
@@ -81,28 +80,15 @@ def playDing():
     play_obj = wave_obj.play()
 
 
-def incThresh(thresh):
-    return thresh + 5
-
-
-def decThresh(thresh):
-    return thresh - 5
-
-
 if __name__ == "__main__":
-    t1 = multiprocessing.Process(
+    t1 = threading.Thread(
         name='speedListener',
         target=speedListener,
     )
-    t2 = multiprocessing.Process(
+    t2 = threading.Thread(
         name='eventListener',
         target=eventListener,
     )
 
     t1.start()
     t2.start()
-
-    t1.join()
-    t2.join()
-
-    # print (x)
