@@ -28,13 +28,11 @@ if __name__ == "__main__":
     # obd connection initialization
     connection = obd.OBD()  # auto-connects to USB or RF port
     # txt->speech "connected"
-    speak("chime connected")
-
-    trackSpeed = obd.commands.SPEED  # select an OBD command (sensor)
-
-    response = connection.query(trackSpeed)  # send the command, and parse the response
+    speak("car connected")
 
     while True:
+        trackSpeed = obd.commands.SPEED  # select an OBD command (sensor)
+        response = connection.query(trackSpeed)  # send the command, and parse the response
         print(response.value)  # returns unit-bearing values thanks to Pint
         print(response.value.to("mph"))  # user-friendly unit conversions
         if threshold < response.value.to("mph") and enabled:

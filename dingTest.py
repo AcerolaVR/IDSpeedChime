@@ -1,7 +1,7 @@
 import time
 
 import simpleaudio as sa
-
+from pynput.mouse import Listener
 
 def playDing():
     wave_obj = sa.WaveObject.from_wave_file("speedchime.wav")
@@ -15,6 +15,20 @@ def incThresh(thresh):
 
 def decThresh(thresh):
     return thresh - 5
+
+def on_click(x, y, button, pressed):
+    print('{0} at {1}'.format(
+        'Pressed' if pressed else 'Released',
+        (x, y)))
+    if not pressed:
+        # Stop listener
+        return True
+
+
+# Collect events until released
+with Listener(
+        on_click=on_click) as listener:
+    listener.join()
 
 
 if __name__ == "__main__":
