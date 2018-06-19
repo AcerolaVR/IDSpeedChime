@@ -9,9 +9,10 @@ from pynput.mouse import Button, Listener  # library for listening to mouse inpu
 THRESHOLD = 30  # speed threshold in mph
 ENABLED = False  # whether or not the speed chime is enabled
 
+
 # A lock for synchronizing access to x
-THRESHOLD_lock = threading.Lock()
-ENABLED_lock = threading.Lock()
+# THRESHOLD_lock = threading.Lock()
+# ENABLED_lock = threading.Lock()
 
 
 def eventListener():
@@ -44,27 +45,25 @@ def speedListener():
     while True:
         if ENABLED:
             print(THRESHOLD)
-            print(ENABLED)
+            # print(ENABLED)
             playDing()
-
-        time.sleep(1.6)
 
 
 def on_click(x, y, button, pressed):
     global THRESHOLD
     global ENABLED
 
-    # print the
-    print('Pressed' if pressed else 'Released')
-    print(button)
+    # print debugging information
+    # print('Pressed' if pressed else 'Released')
+    # print(button)
 
     # change the value on release
     if not pressed:
-        if button is Button.left:
+        if button is Button.left:  # decrement w/ left click
             THRESHOLD = THRESHOLD - 5
-        if button is Button.middle:
+        if button is Button.middle or button is Button.button9 or button is Button.button8:  # toggle enable w/ middle click
             ENABLED = not ENABLED
-        if button is Button.right:
+        if button is Button.right:  # increment w/ right click
             THRESHOLD = THRESHOLD + 5
 
 
@@ -78,6 +77,7 @@ def speak(text):
 def playDing():
     wave_obj = sa.WaveObject.from_wave_file("speedchime.wav")
     play_obj = wave_obj.play()
+    time.sleep(1.8)
 
 
 if __name__ == "__main__":
