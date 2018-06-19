@@ -59,11 +59,11 @@ def on_click(x, y, button, pressed):
 
     # change the value on release
     if not pressed:
-        if button is Button.left:  # decrement w/ left click
+        if button is Button.button8:
             THRESHOLD = THRESHOLD - 5
-        if button is Button.middle or button is Button.button9 or button is Button.button8:  # toggle enable w/ middle click
+        if button is Button.left:
             ENABLED = not ENABLED
-        if button is Button.right:  # increment w/ right click
+        if button is Button.button9:
             THRESHOLD = THRESHOLD + 5
 
 
@@ -75,7 +75,7 @@ def speak(text):
 
 
 def playDing():
-    wave_obj = sa.WaveObject.from_wave_file("speedchime.wav")
+    wave_obj = sa.WaveObject.from_wave_file("/home/pi/personal/IDSpeedChime/speedchime.wav")
     play_obj = wave_obj.play()
     time.sleep(1.8)
 
